@@ -24,6 +24,7 @@ public class TileHoverRaycast : MonoBehaviour
 
             if (tile != null)
             {
+
                 tileInfoText.text = $"Tile: ({tile.x}, {tile.y})";
                 return;
             }
