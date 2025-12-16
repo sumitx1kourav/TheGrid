@@ -2,52 +2,61 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Handles player movement on the grid
-public class PlayerMovement : MonoBehaviour
+// Enemy AI that moves towards the player
+public class EnemyAI : MonoBehaviour, IAI
 {
     public GridManager gridManager;
-    public EnemyAI enemy;                
+    public PlayerMovement player;
     public float moveSpeed = 3f;
 
-    bool isMoving = false;
     TileData currentTile;
-
-    public TileData CurrentTile => currentTile;   
+    bool isMoving = false;
 
     void Start()
     {
-        currentTile = gridManager.grid[0, 0];
+        currentTile = gridManager.grid[
+            gridManager.width - 1,
+            gridManager.height - 1
+        ];
+
         transform.position = currentTile.transform.position + Vector3.up * 0.5f;
     }
 
-    void Update()
+    public void TakeTurn()
     {
         if (isMoving) return;
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            TryMove();
-        }
+        TileData targetTile = GetClosestAdjacentTile();
+        if (targetTile == null) return;
+
+        List<TileData> path = FindPath(currentTile, targetTile);
+        if (path != null)
+            StartCoroutine(MoveAlongPath(path));
     }
 
-    void TryMove()
+    TileData GetClosestAdjacentTile()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        TileData playerTile = player.CurrentTile;
+        TileData bestTile = null;
+        float bestDistance = float.MaxValue;
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        foreach (TileData tile in GetNeighbors(playerTile))
         {
-            TileData targetTile = hit.collider.GetComponent<TileData>();
+            if (tile.isBlocked) continue;
 
-            if (targetTile != null && !targetTile.isBlocked)
+            float dist = Vector3.Distance(
+                tile.transform.position,
+                transform.position
+            );
+
+            if (dist < bestDistance)
             {
-                List<TileData> path = FindPath(currentTile, targetTile);
-
-                if (path != null)
-                {
-                    StartCoroutine(MoveAlongPath(path));
-                }
+                bestDistance = dist;
+                bestTile = tile;
             }
         }
+
+        return bestTile;
     }
 
     List<TileData> FindPath(TileData start, TileData target)
@@ -125,7 +134,5 @@ public class PlayerMovement : MonoBehaviour
         }
 
         isMoving = false;
-
-        enemy.TakeTurn();   //  trigger enemy AFTER player move
     }
 }
