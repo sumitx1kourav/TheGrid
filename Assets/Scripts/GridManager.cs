@@ -13,7 +13,8 @@ public class GridManager : MonoBehaviour
     {
         GenerateGrid();
     }
-
+    // Instantiates tiles and assigns grid coordinates and references
+    // This grid acts as the foundation for pathfinding and AI logic
     void GenerateGrid()
     {
         grid = new TileData[width, height];
@@ -33,7 +34,7 @@ public class GridManager : MonoBehaviour
                 data.y = y;
                 data.isBlocked = false;
 
-                //  THIS LINE IS REQUIRED
+                // Stores tile reference for fast access during gameplay systems
                 grid[x, y] = data;
 
                 tile.name = $"Tile_{x}_{y}";

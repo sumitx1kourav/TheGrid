@@ -2,24 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Handles player movement on the grid
+// Handles player input, pathfinding, and turn-based movement on the grid
 public class PlayerMovement : MonoBehaviour
 {
-    public GridManager gridManager;
-    public EnemyAI enemy;                
+    public GridManager gridManager;     // Access to grid and tile data
+    public EnemyAI enemy;               // Reference to enemy to trigger its turn
     public float moveSpeed = 3f;
 
-    bool isMoving = false;
-    TileData currentTile;
+    bool isMoving = false;              // Prevents new input while moving
+    TileData currentTile;               // Tile the player is currently on
 
-    public TileData CurrentTile => currentTile;   
+    // Exposes player position to other systems such as Enemy AI
+    public TileData CurrentTile => currentTile;
 
+    // Initializes player on a fixed starting tile
     void Start()
     {
         currentTile = gridManager.grid[0, 0];
         transform.position = currentTile.transform.position + Vector3.up * 0.5f;
     }
 
+    // Handles player input and blocks interaction during movement
     void Update()
     {
         if (isMoving) return;
@@ -30,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // Detects clicked tile and attempts to move the player if valid
     void TryMove()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -50,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // Uses BFS to find the shortest valid path on the grid
     List<TileData> FindPath(TileData start, TileData target)
     {
         Queue<TileData> queue = new Queue<TileData>();
@@ -89,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         return path;
     }
 
+    // Returns valid non-diagonal neighboring tiles for grid movement
     List<TileData> GetNeighbors(TileData tile)
     {
         List<TileData> neighbors = new List<TileData>();
@@ -103,6 +109,8 @@ public class PlayerMovement : MonoBehaviour
         return neighbors;
     }
 
+    // Moves the player smoothly along the calculated path
+    // Enemy turn is triggered after player movement completes
     IEnumerator MoveAlongPath(List<TileData> path)
     {
         isMoving = true;
@@ -126,6 +134,6 @@ public class PlayerMovement : MonoBehaviour
 
         isMoving = false;
 
-        enemy.TakeTurn();   //  trigger enemy AFTER player move
+        enemy.TakeTurn();   // Triggers enemy movement after player turn
     }
 }

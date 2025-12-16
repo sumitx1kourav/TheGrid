@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Enemy AI that moves towards the player
+// Controls enemy behaviour using grid-based pathfinding.
+// The enemy takes a turn only after the player finishes moving.
 public class EnemyAI : MonoBehaviour, IAI
 {
-    public GridManager gridManager;
-    public PlayerMovement player;
+    public GridManager gridManager;        // Reference to the grid for tile access
+    public PlayerMovement player;          // Reference to player to track position
     public float moveSpeed = 3f;
 
-    TileData currentTile;
-    bool isMoving = false;
+    TileData currentTile;                  // Tile the enemy is currently standing on
+    bool isMoving = false;                 // Used to prevent multiple moves at once
 
+    // Initializes enemy position on a fixed starting tile (top-right corner)
     void Start()
     {
         currentTile = gridManager.grid[
@@ -22,6 +24,8 @@ public class EnemyAI : MonoBehaviour, IAI
         transform.position = currentTile.transform.position + Vector3.up * 0.5f;
     }
 
+    // Called externally by the player after finishing movement.
+    // This ensures turn-based behaviour.
     public void TakeTurn()
     {
         if (isMoving) return;
@@ -34,6 +38,8 @@ public class EnemyAI : MonoBehaviour, IAI
             StartCoroutine(MoveAlongPath(path));
     }
 
+    // Selects the closest valid tile adjacent to the player.
+    // This ensures the enemy does not move onto the player tile directly.
     TileData GetClosestAdjacentTile()
     {
         TileData playerTile = player.CurrentTile;
@@ -59,6 +65,8 @@ public class EnemyAI : MonoBehaviour, IAI
         return bestTile;
     }
 
+    // Performs grid-based BFS pathfinding to calculate a valid path.
+    // BFS is used because all tiles have equal movement cost.
     List<TileData> FindPath(TileData start, TileData target)
     {
         Queue<TileData> queue = new Queue<TileData>();
@@ -98,6 +106,7 @@ public class EnemyAI : MonoBehaviour, IAI
         return path;
     }
 
+    // Returns all valid non-diagonal neighboring tiles for grid movement.
     List<TileData> GetNeighbors(TileData tile)
     {
         List<TileData> neighbors = new List<TileData>();
@@ -112,6 +121,8 @@ public class EnemyAI : MonoBehaviour, IAI
         return neighbors;
     }
 
+    // Moves the enemy smoothly along the calculated path.
+    // Movement is handled using a coroutine for visible tile-by-tile motion.
     IEnumerator MoveAlongPath(List<TileData> path)
     {
         isMoving = true;

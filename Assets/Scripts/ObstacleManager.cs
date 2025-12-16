@@ -1,18 +1,20 @@
 using UnityEngine;
 
-// Spawns obstacles and marks tiles as blocked
+// Responsible for reading obstacle data and applying it to the grid at runtime
 public class ObstacleManager : MonoBehaviour
 {
-    public ObstacleData obstacleData;
-    public GridManager gridManager;
-    public GameObject obstaclePrefab;
+    public ObstacleData obstacleData;      // ScriptableObject containing blocked tile data
+    public GridManager gridManager;        // Reference to grid to mark tiles as blocked
+    public GameObject obstaclePrefab;      // Visual representation of obstacles
     public float spacing = 1.05f;
 
+    // Initializes obstacle placement when the scene starts
     void Start()
     {
         SpawnObstacles();
     }
 
+    // Spawns obstacle objects and updates tile data based on stored obstacle configuration
     void SpawnObstacles()
     {
         for (int x = 0; x < obstacleData.width; x++)
@@ -27,9 +29,10 @@ public class ObstacleManager : MonoBehaviour
                         y * spacing
                     );
 
+                    // Creates a visible obstacle at the blocked tile position
                     Instantiate(obstaclePrefab, pos, Quaternion.identity);
 
-                    // ?? Mark the tile as blocked
+                    // Marks the corresponding tile as blocked for pathfinding and movement
                     TileData tile = gridManager.grid[x, y];
                     tile.isBlocked = true;
                 }
