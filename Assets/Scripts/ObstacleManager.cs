@@ -1,9 +1,10 @@
 using UnityEngine;
 
-// Spawns obstacles based on ObstacleData
+// Spawns obstacles and marks tiles as blocked
 public class ObstacleManager : MonoBehaviour
 {
     public ObstacleData obstacleData;
+    public GridManager gridManager;
     public GameObject obstaclePrefab;
     public float spacing = 1.05f;
 
@@ -27,6 +28,10 @@ public class ObstacleManager : MonoBehaviour
                     );
 
                     Instantiate(obstaclePrefab, pos, Quaternion.identity);
+
+                    // ?? Mark the tile as blocked
+                    TileData tile = gridManager.grid[x, y];
+                    tile.isBlocked = true;
                 }
             }
         }

@@ -7,6 +7,7 @@ public class GridManager : MonoBehaviour
     public int height = 10;
     public float spacing = 1.05f;
     public GameObject tilePrefab;
+    public TileData[,] grid;
 
     void Start()
     {
@@ -15,7 +16,8 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
-        // This loop creates the grid of tiles based on width and height
+        grid = new TileData[width, height];
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -30,6 +32,9 @@ public class GridManager : MonoBehaviour
                 data.x = x;
                 data.y = y;
                 data.isBlocked = false;
+
+                //  THIS LINE IS REQUIRED
+                grid[x, y] = data;
 
                 tile.name = $"Tile_{x}_{y}";
             }

@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   obstacleData: {fileID: 11400000, guid: ecff3a2135274df43a750e3e7a5df725, type: 2}
+  gridManager: {fileID: 1197996307}
   obstaclePrefab: {fileID: 6398648801633748202, guid: afda6872650bc6244a00a167e463f7dc, type: 3}
   spacing: 1.05
 --- !u!4 &376749024
@@ -1028,7 +1029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5362737805987962404, guid: afda6872650bc6244a00a167e463f7dc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1338
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5362737805987962404, guid: afda6872650bc6244a00a167e463f7dc, type: 3}
       propertyPath: m_LocalPosition.z
