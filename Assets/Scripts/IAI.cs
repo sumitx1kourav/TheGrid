@@ -1,6 +1,4 @@
-using UnityEngine;
-
-public class IAI
+public interface IAI
 {
-    
+    void TakeTurn();
 }
